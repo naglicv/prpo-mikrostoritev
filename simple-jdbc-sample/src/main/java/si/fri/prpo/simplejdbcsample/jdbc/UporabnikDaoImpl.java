@@ -80,17 +80,72 @@ public class UporabnikDaoImpl implements BaseDao {
     public void vstavi(Entiteta ent) {
         //programska koda za vstavljanje uporabnikov
 
+        PreparedStatement ps = null;
+
+        try {
+
+            String sql = "";
+
+            ps = connection.prepareStatement(sql);
+            //ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+        }
+        catch (SQLException e) {
+            log.severe(e.toString());
+        }
+        finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                }
+                catch (SQLException e) {
+                    log.severe(e.toString());
+                }
+            }
+        }
     }
 
     @Override
     public void odstrani(int id) {
         //programska koda za odstranjevanje uporabnikov
+
+        PreparedStatement ps = null;
+
+        try {
+
+            String sql = "DELETE FROM uporabnik WHERE id = ?";
+            ps = connection.prepareStatement(sql);
+            ps.setInt(1, id);
+            int rowsAffected = ps.executeUpdate();
+
+            if (rowsAffected > 0) {
+                System.out.println("Entity with ID " + id + " deleted successfully.");
+            } else {
+                System.out.println("No entity found with ID " + id);
+            }
+
+        }
+        catch (SQLException e) {
+            log.severe(e.toString());
+        }
+        finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                }
+                catch (SQLException e) {
+                    log.severe(e.toString());
+                }
+            }
+        }
     }
 
     @Override
     public void posodobi(Entiteta ent) {
         //programska koda za posodabljanje uporabnikov
-
+        Uporabnik uporabnik = (Uporabnik) ent;
+        
     }
 
     @Override
