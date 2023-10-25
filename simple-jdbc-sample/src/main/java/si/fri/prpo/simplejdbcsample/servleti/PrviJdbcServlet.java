@@ -33,22 +33,58 @@ public class PrviJdbcServlet extends HttpServlet {
         // dostop do podatkovne baye
         BaseDao uporabnikDao = UporabnikDaoImpl.getInstance();
 
-        Uporabnik uporabnik = new Uporabnik("Miha", "Novak", "mihanovak");
-
-        // dodajanje uporabnika
-        //writer.append("Dodajam uporabnika:\n" + uporabnik.toString());
-        //uporabnikDao.vstavi(uporabnik);
-        //writer.append("\n\n");
-
-        // demonstracija preostalih metod
-
         // izpis vseh uporabnikov
         writer.append("Seznam obstojecih uporabnikov:\n");
         List<Entiteta> uporabniki = uporabnikDao.vrniVse();
         uporabniki.stream().forEach(u -> writer.append(u.toString() + "\n"));
+        writer.append("\n");
 
+        // dodajanje uporabnika
+        Uporabnik uporabnik = new Uporabnik("Miha", "Novak", "mihanovak");
+        writer.append("Dodajam uporabnika:\n" + uporabnik.toString());
+        uporabnikDao.vstavi(uporabnik);
+        writer.append("\n\n");
 
+        // izpis vseh uporabnikov
+        writer.append("Seznam obstojecih uporabnikov:\n");
+        uporabniki = uporabnikDao.vrniVse();
+        uporabniki.stream().forEach(u -> writer.append(u.toString() + "\n"));
+        writer.append("\n");
 
+        // brisanje uporabnika
+        int id = 17;
+        uporabnik = (Uporabnik) uporabnikDao.vrni(id);
+        if(uporabnik == null) {
+            writer.append("Uporabnik z id=" + id + " ne obstaja.");
+        } else {
+            writer.append("Brisem uporabnika:\n" + uporabnik.toString());
+            uporabnikDao.odstrani(id);
+        }
+        writer.append("\n\n");
 
+        // izpis vseh uporabnikov
+        writer.append("Seznam obstojecih uporabnikov:\n");
+        uporabniki = uporabnikDao.vrniVse();
+        uporabniki.stream().forEach(u -> writer.append(u.toString() + "\n"));
+        writer.append("\n");
+
+        // posodobitev uporabnika
+        id = 18;
+        uporabnik = new Uporabnik("Miha", "Novak Komar", "mnovakkomar");
+        uporabnik.setId(id);
+        Uporabnik up = (Uporabnik) uporabnikDao.vrni(id);
+        if(up == null) {
+            writer.append("Uporabnik z id=" + id + " ne obstaja.");
+        } else {
+            uporabnikDao.posodobi(uporabnik);
+            writer.append("Posodabljam uporabnika z id=" + id + ":\n" + "Iz:\t" +
+                    up.toString() + "\nV:\t" + uporabnik.toString());
+        }
+        writer.append("\n\n");
+
+        // izpis vseh uporabnikov
+        writer.append("Seznam obstojecih uporabnikov:\n");
+        uporabniki = uporabnikDao.vrniVse();
+        uporabniki.stream().forEach(u -> writer.append(u.toString() + "\n"));
     }
 }

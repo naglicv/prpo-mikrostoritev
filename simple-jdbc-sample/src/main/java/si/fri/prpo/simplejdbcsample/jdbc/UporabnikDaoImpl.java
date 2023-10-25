@@ -42,11 +42,10 @@ public class UporabnikDaoImpl implements BaseDao {
 
     @Override
     public Entiteta vrni(int id) {
-
+        // iskanje uporabnika
         PreparedStatement ps = null;
 
         try {
-
             String sql = "SELECT * FROM uporabnik WHERE id = ?";
             ps = connection.prepareStatement(sql);
             ps.setInt(1, id);
@@ -78,44 +77,51 @@ public class UporabnikDaoImpl implements BaseDao {
 
     @Override
     public void vstavi(Entiteta ent) {
-        //programska koda za vstavljanje uporabnikov
-
+        // vstavljanje uporabnika
         PreparedStatement ps = null;
 
         try {
+            if (ent instanceof Uporabnik uporabnik) {
+                String sql = "INSERT INTO uporabnik (ime, priimek, uporabniskoIme) VALUES (?, ?, ?)";
+                ps = connection.prepareStatement(sql);
 
-            String sql = "";
+                // Set the values for the placeholders in the SQL query
+                ps.setString(1, uporabnik.getIme());
+                ps.setString(2, uporabnik.getPriimek());
+                ps.setString(3, uporabnik.getUporabniskoIme());
 
-            ps = connection.prepareStatement(sql);
-            //ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
+                // Execute the SQL query to insert the entity
+                int rowsAffected = ps.executeUpdate();
 
-        }
-        catch (SQLException e) {
+                if (rowsAffected > 0) {
+                    log.info("Entity inserted successfully.");
+                } else {
+                    log.info("Entity insertion failed.");
+                }
+            }
+        } catch (SQLException e) {
             log.severe(e.toString());
-        }
-        finally {
+        } finally {
             if (ps != null) {
                 try {
                     ps.close();
-                }
-                catch (SQLException e) {
+                } catch (SQLException e) {
                     log.severe(e.toString());
                 }
             }
         }
     }
 
+
     @Override
     public void odstrani(int id) {
-        //programska koda za odstranjevanje uporabnikov
-
+        // odstranjevanje uporabnika
         PreparedStatement ps = null;
 
         try {
-
             String sql = "DELETE FROM uporabnik WHERE id = ?";
             ps = connection.prepareStatement(sql);
+
             ps.setInt(1, id);
             int rowsAffected = ps.executeUpdate();
 
@@ -143,9 +149,42 @@ public class UporabnikDaoImpl implements BaseDao {
 
     @Override
     public void posodobi(Entiteta ent) {
-        //programska koda za posodabljanje uporabnikov
-        Uporabnik uporabnik = (Uporabnik) ent;
-        
+        // posodabljanje uporabnika
+        PreparedStatement ps = null;
+
+        try {
+            Uporabnik uporabnik = (Uporabnik) ent;
+            String sql = "UPDATE uporabnik SET ime = ?, priimek = ?, uporabniskoime = ? WHERE id = ?";
+            ps = connection.prepareStatement(sql);
+
+            ps.setString(1, uporabnik.getIme());
+            ps.setString(2, uporabnik.getPriimek());
+            ps.setString(3, uporabnik.getUporabniskoIme());
+            ps.setInt(4, uporabnik.getId());
+
+            int rowsAffected = ps.executeUpdate();
+
+            if (rowsAffected > 0) {
+                log.info("Uporabnik uspešno posodobljen.");
+            } else {
+                log.info("Posodobitev uporabnika ni uspela.");
+            }
+
+        }
+        catch (SQLException e) {
+            log.severe(e.toString());
+        }
+        finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                }
+                catch (SQLException e) {
+                    log.severe(e.toString());
+                }
+            }
+        }
+
     }
 
     @Override
@@ -155,7 +194,6 @@ public class UporabnikDaoImpl implements BaseDao {
         Statement st = null;
 
         try {
-
             st = connection.createStatement();
             String sql = "SELECT * FROM uporabnik";
             ResultSet rs = st.executeQuery(sql);
